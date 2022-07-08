@@ -1,7 +1,7 @@
 #include "VBO.h"
 
 
-VBO::VBO(GLfloat* vertices, GLsizeiptr size)
+VBO::VBO(const GLfloat* vertices, GLsizeiptr size)
 {
     GLint64 bound_buffer_id;
     glGetInteger64v(GL_ARRAY_BUFFER_BINDING, &bound_buffer_id);
@@ -27,4 +27,9 @@ void VBO::bind()
 void VBO::un_bind()
 {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void VBO::destroy()
+{
+    glDeleteBuffers(1, &_id);
 }

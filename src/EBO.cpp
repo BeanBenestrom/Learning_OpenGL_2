@@ -1,7 +1,7 @@
 #include "EBO.h"
 
 
-EBO::EBO(GLuint* indices, GLsizeiptr size)
+EBO::EBO(const GLuint* indices, GLsizeiptr size)
 {
     GLint64 bound_element_id;
     glGetInteger64v(GL_ELEMENT_ARRAY_BUFFER_BINDING, &bound_element_id);
@@ -27,4 +27,9 @@ void EBO::bind()
 void EBO::un_bind()
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void EBO::destroy()
+{
+    glDeleteBuffers(1, &_id);
 }

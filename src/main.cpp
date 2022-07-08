@@ -13,6 +13,7 @@
 #include "EBO.h"
 #include "texture.h"
 #include "camera.h"
+#include "objects/cube.h"
 
 
 namespace screenSettings
@@ -49,28 +50,6 @@ float previous_time;
 float delta_time;
 
 
-// float mixValue = 0;
-
-// void processInput(GLFWwindow *window)
-// {
-//     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-//         glfwSetWindowShouldClose(window, true);
-
-//     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-//     {
-//         mixValue += 0.001f; // change this value accordingly (might be too slow or too fast based on system hardware)
-//         if(mixValue >= 1.0f)
-//             mixValue = 1.0f;
-//     }
-//     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-//     {
-//         mixValue -= 0.001f; // change this value accordingly (might be too slow or too fast based on system hardware)
-//         if (mixValue <= 0.0f)
-//             mixValue = 0.0f;
-//     }
-// }
-
-
 void processInput(GLFWwindow *window, Camera &camera, float deltaTime)
 {
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { camera.move(FORWARD, deltaTime); }
@@ -104,6 +83,7 @@ void mouse_movement(GLFWwindow* window, double xPos, double yPos)
 
 int main()
 {
+    std::cout << "Make cube\n";
     // Setup GLFW
     if (glfwInit() == GLFW_FALSE) { 
         std::cout << "[!] GLFW failed to intialize!\n";
@@ -124,6 +104,7 @@ int main()
         return 0;
     }
     glfwMakeContextCurrent(window);
+    glfwSetWindowPos(window, 800, 100);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(window, mouse_movement);
 
@@ -138,64 +119,6 @@ int main()
     glClear(GL_COLOR_BUFFER_BIT);
     glfwSwapBuffers(window);
 
-    // Triangle verticies and indices
-    // GLfloat vertices[] = { 
-    // //          POSITION         COLOR     TEXTURE                                   
-    //     -0.5f,  -0.5f,  0.0f,   1, 0, 0,    0, 0,       // Bottom Left
-    //      0.5f,  -0.5f,  0.0f,   0, 1, 0,    1, 0,       // Bottom right
-    //      0.5f,   0.5f,  0.0f,   0, 0, 1,    1, 1,       // Upper right
-    //     -0.5f,   0.5f,  0.0f,   1, 1, 1,    0, 1        // Upper left
-    // };
-
-    GLfloat vertices[] = {
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-};
-
-    GLuint indices[] = {
-        0, 1, 2,
-        2, 3, 0,
-    };
-
     // Create shaderProgram
     ShaderProgram shaderProgram("shaders/vertexShader.vs", "shaders/fragmentShader.fs");
     if (!shaderProgram.get_status()) { 
@@ -207,62 +130,74 @@ int main()
     }
 
     {
+        // Texture
+        Texture texture("textures/Mr Bean God form 2.png", 0, GL_LINEAR, GL_REPEAT, GL_RGB);
+        shaderProgram.set_uniform("tex0", 0);
+
         // Objects
+        const GLfloat vertices[] = {
+        -0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+
+         0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f
+        };
+
+        const GLuint indices[] = {
+            0, 1, 2,    2, 3, 0,
+            4, 5, 6,    6, 7, 4,
+            8, 9, 10,   10, 11, 8,
+            12, 13, 14, 14, 15, 12,
+            16, 17, 18, 18, 19, 16,
+            20, 21, 22, 22, 23, 20,
+        };
+
         VAO vertexArray;
         VBO vertexBuffer(vertices, sizeof(vertices));
         EBO elementBuffer(indices, sizeof(indices));
-
         vertexArray.link_atribute(vertexBuffer, 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), 0);
         vertexArray.link_atribute(vertexBuffer, 2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GL_FLOAT)));
         vertexArray.link_EBO(elementBuffer);
-
-        //Activate¨
-        shaderProgram.activate();
-        vertexArray.bind();
-
-        // Texture
-        Texture texture("textures/Mr Bean God form 2.png", 0, GL_LINEAR, GL_REPEAT, GL_RGB);
-        texture.bind();
-        shaderProgram.set_uniform("tex0", 0);
-
-        // 3D
-        std::cout << "Aspect ratio: " << screenSettings::width/screenSettings::height << "\n";
-
-        glm::vec3 cubePositions[] = {
-            glm::vec3( 0.0f,  0.0f,  0.0f), 
-            glm::vec3( 2.0f,  5.0f, -15.0f), 
-            glm::vec3(-1.5f, -2.2f, -2.5f),  
-            glm::vec3(-3.8f, -2.0f, -12.3f),  
-            glm::vec3( 2.4f, -0.4f, -3.5f),  
-            glm::vec3(-1.7f,  3.0f, -7.5f),  
-            glm::vec3( 1.3f, -2.0f, -2.5f),  
-            glm::vec3( 1.5f,  2.0f, -2.5f), 
-            glm::vec3( 1.5f,  0.2f, -1.5f), 
-            glm::vec3(-1.3f,  1.0f, -1.5f)
-        };
+        Cube cube1(&vertexArray, &shaderProgram, 3, 0, 0, 1, 0, 1, 1);
+        Cube cube2(&vertexArray, &shaderProgram, 0, 0, 0, &texture);     
 
         // Camera space --> Screen space
         glm::mat4 projection; 
         projection = glm::perspective(cameraSettings::fov, (float)screenSettings::width/(float)screenSettings::height, 0.1f, 100.0f);
-        shaderProgram.set_uniform("projection", projection);  
+        shaderProgram.set_uniform("projection", projection);
 
         while (!glfwWindowShouldClose(window))
         {
             // Delta time
             delta_time = (float)(glfwGetTime() - previous_time);
             previous_time = glfwGetTime();
-            // std::cout << delta_time << " : " << 1/delta_time << " fps\n";
 
             // Draw objects
-            for (int i = 0; i < 10; i++)
-            {
-                // Local space --> Global space
-                glm::mat4 model = glm::translate(glm::mat4(1.0f), cubePositions[i]);
-                model = glm::rotate(model, i * (float)(glfwGetTime()) * glm::radians(50.0f), cubePositions[i]);
-                shaderProgram.set_uniform("model", model);
-
-                glDrawArrays(GL_TRIANGLES, 0, 36);
-            }
+            cube1.draw(); cube2.draw();
 
             // Global space --> camera space
             glm::mat4 view = glm::rotate(glm::mat4(1.0f), -glm::radians(camera.get_rotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -270,7 +205,7 @@ int main()
             view = glm::translate(view, camera.get_position());
             shaderProgram.set_uniform("view", view);
 
-            glfwSwapBuffers(window);  
+            glfwSwapBuffers(window);
             
             // User input
             glfwPollEvents();

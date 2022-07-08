@@ -64,3 +64,8 @@ void VAO::un_bind()
 {
     glBindVertexArray(0); 
 }
+
+void VAO::destroy()
+{
+    glDeleteVertexArrays(1, &_id);
+}

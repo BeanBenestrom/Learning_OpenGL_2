@@ -3,6 +3,7 @@
 
 #include "texture.h"
 
+
 Texture::Texture(const char* path, GLenum textureUnit, GLenum TEXTURE_FILTER, GLenum TEXTURE_WRAP, GLenum FORMAT)
 {
     stbi_set_flip_vertically_on_load(true);

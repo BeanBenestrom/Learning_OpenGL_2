@@ -9,11 +9,12 @@ private:
     GLsizeiptr _size;
 
 public:
-    VBO(GLfloat* vertices, GLsizeiptr size);
+    VBO(const GLfloat* vertices, GLsizeiptr size);
     ~VBO();
 
     void bind();
     void un_bind();
+    void destroy();
 
     GLsizeiptr inline get_size() { return _size; }
     GLuint inline get_id() { return _id; }

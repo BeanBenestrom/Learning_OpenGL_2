@@ -27,6 +27,7 @@ public:
 
     void bind();
     void un_bind();
+    void destroy();
 
     GLuint inline get_id() { return _id; }
 };

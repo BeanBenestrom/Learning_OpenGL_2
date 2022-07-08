@@ -30,7 +30,9 @@ public:
 
     void set_uniform(const GLchar* name, GLint data);
     void set_uniform(const GLchar* name, GLfloat data);
-    void set_uniform(const GLchar* name, const glm::mat4& data);
+    void set_uniform(const GLchar* name, const glm::vec3& data);
+    void set_uniform(const GLchar* name, const glm::vec4& data);
+    void set_uniform(const GLchar* name, const glm::mat4& data); 
 
     bool inline get_bind_status() { return _bind_status; }
     bool inline get_status() { return _status; }

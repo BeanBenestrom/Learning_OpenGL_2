@@ -130,6 +130,24 @@ void ShaderProgram::set_uniform(const GLchar* name, GLfloat data)
     if (!_bind_status) { glUseProgram(0); }
 }
 
+void ShaderProgram::set_uniform(const GLchar* name, const glm::vec3& data)
+{
+    glUseProgram(_id);
+    GLuint uniform = glGetUniformLocation(_id, name);
+    glUniform3fv(uniform, 1, glm::value_ptr(data));
+
+    if (!_bind_status) { glUseProgram(0); }
+}
+
+void ShaderProgram::set_uniform(const GLchar* name, const glm::vec4& data)
+{
+    glUseProgram(_id);
+    GLuint uniform = glGetUniformLocation(_id, name);
+    glUniform4fv(uniform, 1, glm::value_ptr(data));
+
+    if (!_bind_status) { glUseProgram(0); }
+}
+
 void ShaderProgram::set_uniform(const GLchar* name, const glm::mat4& data)
 {
     glUseProgram(_id);
