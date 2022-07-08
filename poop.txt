@@ -1,0 +1,56 @@
+// Axis
+// GLfloat axisXVertices[] = {
+//     0, 0, 0,
+//     1, 0, 0
+// };
+// GLfloat axisYVertices[] = {
+//     0, 0, 0,
+//     0, 2, 0
+// };
+// GLfloat axisZVertices[] = {
+//     0, 0, 0,
+//     0, 0, 3
+// };
+
+// glm::vec3 axisPositions[] = {
+//     glm::vec3( 1.0f,  0.0f,  0.0f),
+//     glm::vec3( 0.0f,  1.0f,  0.0f), 
+//     glm::vec3( 0.0f,  0.0f,  1.0f) 
+// };
+
+// VBO vertexBufferAxisX(axisXVertices, sizeof(axisXVertices));
+// VBO vertexBufferAxisY(axisYVertices, sizeof(axisYVertices));
+// VBO vertexBufferAxisZ(axisZVertices, sizeof(axisZVertices));
+// VAO AxisX, AxisY, AxisZ;
+// AxisX.link_atribute(vertexBufferAxisX, 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+// AxisY.link_atribute(vertexBufferAxisY, 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+// AxisZ.link_atribute(vertexBufferAxisZ, 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+
+
+
+// std::cout << -offsetY << " * "<< sensitivity << "\n"; 
+// std::cout << -offsetY * sensitivity << "\n"; 
+// std::cout << (float)0.0001 << " " << (float)0.00001 << " " << (float)0.000001 << "\n\n";
+rotation += glm::vec2(-offsetY * sensitivity, -offsetX * sensitivity);
+
+float x_radians = -glm::radians(rotation.x);
+float y_radians = glm::radians(rotation.y);
+
+local_x_axis = glm::vec3(cos(x_radians),   -sin(x_radians) * sin(y_radians),    cos(x_radians) * sin(y_radians));
+local_y_axis = glm::vec3(0.0f,              cos(x_radians),                     sin(x_radians));
+local_z_axis = glm::vec3(-sin(x_radians),  -sin(x_radians) * cos(y_radians),    cos(x_radians) * cos(y_radians));
+
+
+
+// std::cout << -offsetY << " * "<< sensitivity << "\n"; 
+// std::cout << -offsetY * sensitivity << "\n"; 
+// std::cout << (float)0.0001 << " " << (float)0.00001 << " " << (float)0.000001 << "\n\n";
+rotation += glm::vec2(-offsetY * sensitivity, -offsetX * sensitivity);
+
+// float x_rad = -glm::radians(rotation.x);
+// float y_rad = glm::radians(rotation.y);
+
+// local_z_axis = glm::vec3(cos(x_rad) * sin(y_rad), sin(x_rad), cos(x_rad) * cos(y_rad));
+// local_x_axis = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), local_z_axis));
+// local_y_axis = glm::normalize(glm::cross(local_z_axis, local_x_axis));
