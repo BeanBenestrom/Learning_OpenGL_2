@@ -23,8 +23,12 @@ GLuint compile_shader(const GLchar* shaderSource, GLenum shaderType)
         GLchar message[1024];
         glGetShaderInfoLog(shader, 1024, &log_length, message);
         
-        std::cout << "[!] OPENGL - " << (shaderType == GL_VERTEX_SHADER ? "VERTEX SHADER" : "FRAGMENT SHADER") << " compilation error:\n" 
-        << message << "\n";
+        std::cout << "[!] OPENGL - ";
+        if (shaderType == GL_VERTEX_SHADER) { std::cout << "VERTEX SHADER"; }
+        else if (shaderType == GL_FRAGMENT_SHADER) { std::cout << "FRAGMENT SHADER"; }
+        else if (shaderType == GL_COMPUTE_SHADER) { std::cout << "COMPUTE SHADER"; }
+        std::cout << " compilation error:\n" << message << "\n";
+        
         return GL_NONE;
     }
 
@@ -101,6 +105,70 @@ void ShaderProgram::activate()
 
 void ShaderProgram::un_activate() 
 { 
+    glUseProgram(0); 
+}
+
+
+ComputeShader::ComputeShader(const char* computeShaderPath)
+{
+    // Load shader source -> src
+    std::string computeShaderSource;
+
+    bool success = utility::load_text_from_file(computeShaderSource, computeShaderPath);
+
+    // Check for load failure
+    if (!success) { 
+        std::cout << "[!] UTILITY - Could not load COMPUTE SHADER from source file!\n    PATH: " << computeShaderPath << "\n"; 
+    }
+
+    if (success)
+    {
+        this->_computeShaderSource = computeShaderPath;
+
+        const GLchar* csc = computeShaderSource.c_str();
+
+        // Compile shader
+        GLuint computeShader = compile_shader(csc, GL_COMPUTE_SHADER);
+
+        if (computeShader != GL_NONE)
+        {
+            // Create program
+            GLuint shaderProgram = glCreateProgram();
+            glAttachShader(shaderProgram, computeShader);
+            glLinkProgram(shaderProgram);
+
+            // Check for linking failure
+            GLint link_success;
+            glGetProgramiv(shaderProgram, GL_LINK_STATUS, &link_success);
+            if (link_success != GL_TRUE)
+            {
+                GLsizei log_length = 0;
+                GLchar message[1024];
+                glGetProgramInfoLog(shaderProgram, 1024, &log_length, message);            
+                std::cout << "[!] OPENGL - Program linking error:\n" << message << "\n";
+            }
+
+            // Delete shaders
+            glDeleteShader(computeShader);
+
+            this->_id = shaderProgram;
+            this->_status = true;
+        } 
+    }
+}
+
+ComputeShader::~ComputeShader()
+{
+    glDeleteProgram(_id);
+}
+
+void ComputeShader::activate()
+{
+    glUseProgram(_id); 
+}
+
+void ComputeShader::un_activate()
+{
     glUseProgram(0); 
 }
 

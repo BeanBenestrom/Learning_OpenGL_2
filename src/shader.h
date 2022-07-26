@@ -35,6 +35,26 @@ public:
     void set_uniform(const std::string& name, const glm::vec4& data);
     void set_uniform(const std::string& name, const glm::mat4& data); 
 
-    bool inline get_status() { return _status; }
-    GLuint inline get_id() { return _id; }
+    bool inline get_status() const { return _status; }
+    GLuint inline get_id() const { return _id; }
+};
+
+
+class ComputeShader 
+{
+private:
+    bool _status = false;   // Is program functional
+
+    std::string _computeShaderSource;
+    GLuint _id = 0;
+    
+public:
+    ComputeShader(const char* computeShaderPath);
+    ~ComputeShader();
+
+    void activate();
+    void un_activate();
+
+    bool inline get_status() const { return _status; }
+    GLuint inline get_id() const { return _id; }
 };
