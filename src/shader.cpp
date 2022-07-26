@@ -97,13 +97,11 @@ ShaderProgram::~ShaderProgram()
 void ShaderProgram::activate() 
 { 
     glUseProgram(_id); 
-    _bind_status = true;
 }
 
 void ShaderProgram::un_activate() 
 { 
     glUseProgram(0); 
-    _bind_status = false;
 }
 
 
@@ -112,47 +110,37 @@ void ShaderProgram::un_activate()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void ShaderProgram::set_uniform(const GLchar* name, GLint data)
+void ShaderProgram::set_uniform(const std::string& name, GLint data)
 {
     glUseProgram(_id);
-    GLuint uniform = glGetUniformLocation(_id, name);
-    glUniform1i(uniform, data);
-
-    if (!_bind_status) { glUseProgram(0); }
+    if (uniform_map.find(name) == uniform_map.end()) { uniform_map[name] = glGetUniformLocation(_id, name.c_str()); }
+    glUniform1i(uniform_map[name], data);
 }
 
-void ShaderProgram::set_uniform(const GLchar* name, GLfloat data)
+void ShaderProgram::set_uniform(const std::string& name, GLfloat data)
 {
     glUseProgram(_id);
-    GLuint uniform = glGetUniformLocation(_id, name);
-    glUniform1f(uniform, data);
-
-    if (!_bind_status) { glUseProgram(0); }
+    if (uniform_map.find(name) == uniform_map.end()) { uniform_map[name] = glGetUniformLocation(_id, name.c_str()); }
+    glUniform1f(uniform_map[name], data);
 }
 
-void ShaderProgram::set_uniform(const GLchar* name, const glm::vec3& data)
+void ShaderProgram::set_uniform(const std::string& name, const glm::vec3& data)
 {
     glUseProgram(_id);
-    GLuint uniform = glGetUniformLocation(_id, name);
-    glUniform3fv(uniform, 1, glm::value_ptr(data));
-
-    if (!_bind_status) { glUseProgram(0); }
+    if (uniform_map.find(name) == uniform_map.end()) { uniform_map[name] = glGetUniformLocation(_id, name.c_str()); }
+    glUniform3fv(uniform_map[name], 1, glm::value_ptr(data));
 }
 
-void ShaderProgram::set_uniform(const GLchar* name, const glm::vec4& data)
+void ShaderProgram::set_uniform(const std::string& name, const glm::vec4& data)
 {
     glUseProgram(_id);
-    GLuint uniform = glGetUniformLocation(_id, name);
-    glUniform4fv(uniform, 1, glm::value_ptr(data));
-
-    if (!_bind_status) { glUseProgram(0); }
+    if (uniform_map.find(name) == uniform_map.end()) { uniform_map[name] = glGetUniformLocation(_id, name.c_str()); }
+    glUniform4fv(uniform_map[name], 1, glm::value_ptr(data));
 }
 
-void ShaderProgram::set_uniform(const GLchar* name, const glm::mat4& data)
+void ShaderProgram::set_uniform(const std::string& name, const glm::mat4& data)
 {
     glUseProgram(_id);
-    GLuint uniform = glGetUniformLocation(_id, name);
-    glUniformMatrix4fv(uniform, 1, GL_FALSE, glm::value_ptr(data));
-
-    if (!_bind_status) { glUseProgram(0); }
+    if (uniform_map.find(name) == uniform_map.end()) { uniform_map[name] = glGetUniformLocation(_id, name.c_str()); }
+    glUniformMatrix4fv(uniform_map[name], 1, GL_FALSE, glm::value_ptr(data));
 }
