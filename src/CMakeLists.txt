@@ -1,5 +1,4 @@
 file(GLOB source_files ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-file(GLOB source_object_files ${CMAKE_CURRENT_SOURCE_DIR}/objects/*.cpp)
 
 add_executable(LearnOpenGL ${source_files} ${source_object_files})
 

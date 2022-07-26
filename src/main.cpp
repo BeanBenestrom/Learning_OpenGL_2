@@ -13,7 +13,7 @@
 #include "EBO.h"
 #include "texture.h"
 #include "camera.h"
-#include "objects/cube.h"
+// #include "objects/cube.h"
 
 
 namespace screenSettings
@@ -121,7 +121,8 @@ int main()
 
     // Create shaderProgram
     ShaderProgram shaderProgram("shaders/vertexShader.vs", "shaders/fragmentShader.fs");
-    if (!shaderProgram.get_status()) { 
+    ShaderProgram lightProgram("shaders/vertexShader.vs", "shaders/lightFragmentShader.fs");
+    if (!shaderProgram.get_status() || !lightProgram.get_status()) { 
         std::cerr << "[!] SHADER PROGRAM - Failed to create shader program!\n";
         glfwDestroyWindow(window);
         glfwTerminate();
@@ -175,20 +176,28 @@ int main()
             16, 17, 18, 18, 19, 16,
             20, 21, 22, 22, 23, 20,
         };
-
         VAO vertexArray;
         VBO vertexBuffer(vertices, sizeof(vertices));
         EBO elementBuffer(indices, sizeof(indices));
         vertexArray.link_atribute(vertexBuffer, 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), 0);
         vertexArray.link_atribute(vertexBuffer, 2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GL_FLOAT)));
         vertexArray.link_EBO(elementBuffer);
-        Cube cube1(&vertexArray, &shaderProgram, 3, 0, 0, 1, 0, 1, 1);
-        Cube cube2(&vertexArray, &shaderProgram, 0, 0, 0, &texture);     
+        vertexArray.bind();
 
+        // Cubes
+        glm::vec3 cubePos = glm::vec3(0, -2, 0);    glm::vec3 cubeColor = glm::vec3(0.6, 0.8, 0);
+        glm::vec3 lightPos = glm::vec3(-1, 1, 1);   glm::vec3 lightColor = glm::vec3(1, 0.2, 0);
+        
+        shaderProgram.set_uniform("color", cubeColor);
+        shaderProgram.set_uniform("lightColor", lightColor);
+        lightProgram.set_uniform("color", lightColor);
+
+        glm::mat4 model = glm::mat4(1.0f);
         // Camera space --> Screen space
         glm::mat4 projection; 
         projection = glm::perspective(cameraSettings::fov, (float)screenSettings::width/(float)screenSettings::height, 0.1f, 100.0f);
         shaderProgram.set_uniform("projection", projection);
+        lightProgram.set_uniform("projection", projection);
 
         while (!glfwWindowShouldClose(window))
         {
@@ -197,13 +206,25 @@ int main()
             previous_time = glfwGetTime();
 
             // Draw objects
-            cube1.draw(); cube2.draw();
+
+            shaderProgram.activate();
+            model = glm::translate(glm::mat4(1.0f), cubePos);
+            shaderProgram.set_uniform("model", model);
+            glDrawElements(GL_TRIANGLES, sizeof(vertices) / sizeof(GLfloat), GL_UNSIGNED_INT, 0);
+
+            
+            model = glm::translate(glm::mat4(1.0f), lightPos);
+            model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+            lightProgram.activate();
+            lightProgram.set_uniform("model", model);
+            glDrawElements(GL_TRIANGLES, sizeof(vertices) / sizeof(GLfloat), GL_UNSIGNED_INT, 0);
 
             // Global space --> camera space
             glm::mat4 view = glm::rotate(glm::mat4(1.0f), -glm::radians(camera.get_rotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
             view = glm::rotate(view, -glm::radians(camera.get_rotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
             view = glm::translate(view, camera.get_position());
             shaderProgram.set_uniform("view", view);
+            lightProgram.set_uniform("view", view);
 
             glfwSwapBuffers(window);
             
