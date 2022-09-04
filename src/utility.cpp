@@ -6,22 +6,26 @@
 
 namespace utility 
 {
-    int load_text_from_file(std::string &container, const char* path)
+    std::tuple<std::string, bool> load_text_from_file(const std::string& path)
     {
         std::ifstream file;
         file.open(path, std::ios::in);
 
-        if (!file.is_open()) { return 0; }
+        if (!file.is_open()) { 
+            std::cerr << "[*] Could not open file!\n"
+                      << "    PATH: " << path << "\n\n";
+            return { "", false }; 
+        }
 
-        container = "";         // Makes sure that container is empty
-        std::string snippet;    // Line of text     
+        std::string container = "";         // Makes sure that container is empty
+        std::string snippet;                // Line of text     
         
         while (std::getline(file, snippet)) 
         { 
             container += snippet + "\n";
         }
         file.close();
-        return 1;
+        return { container, true };
     }
 
     glm::vec3 rotate_around_x(const glm::vec3& vector, float angle)

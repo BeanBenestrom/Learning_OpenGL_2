@@ -1,7 +1,12 @@
 #include "VAO.h"
 
 
-VAO::VAO()
+VAO::VAO(const GLfloat* vertices, const GLuint* indices)
+    : 
+    _id{0}, 
+    _vertice_count{sizeof(vertices) / sizeof(GLfloat)}, 
+    _vbo{std::make_unique<VBO>(vertices, sizeof(vertices))}, 
+    _ebo{std::make_unique<EBO>(indices, sizeof(indices))}
 {
     glGenVertexArrays(1, &_id);
 }
@@ -12,7 +17,6 @@ VAO::~VAO()
 }
 
 void VAO::link_atribute(
-    VBO &VBO, 
     GLuint layout, 
     GLuint componentNumber, 
     GLenum type, 
@@ -22,28 +26,17 @@ void VAO::link_atribute(
 )
 {
     glBindVertexArray(_id);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO.get_id());
+    _vbo->bind();
     glVertexAttribPointer(layout, componentNumber, type, normalized, stride, offset);
     glEnableVertexAttribArray(layout);
 }
 
-void VAO::link_EBO(EBO &EBO)
-{
-    glBindVertexArray(_id);
-    EBO.bind();
-}
-
-void VAO::bind() 
+void VAO::bind() const
 { 
     glBindVertexArray(_id); 
 }
 
-void VAO::un_bind() 
+void VAO::unbind() const
 {
     glBindVertexArray(0); 
-}
-
-void VAO::destroy()
-{
-    glDeleteVertexArrays(1, &_id);
 }

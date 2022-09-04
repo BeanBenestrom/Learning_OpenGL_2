@@ -5,17 +5,18 @@
 class EBO
 {
 private:
-    GLuint _id = 0;
+    GLuint _id;
     GLsizeiptr _size;
 
 public:
     EBO(const GLuint* indices, GLsizeiptr size);
+    EBO(const EBO& ebo) = delete;
+    EBO(EBO&& ebo) = delete;
     ~EBO();
 
-    void bind();
-    void un_bind();
-    void destroy();
+    void bind() const;
+    void unbind() const;
 
-    GLsizeiptr inline get_size() { return _size; }
-    GLuint inline get_id() { return _id; }
+    GLuint     inline get_id()      const { return _id;   }
+    GLsizeiptr inline get_size()    const { return _size; }
 };

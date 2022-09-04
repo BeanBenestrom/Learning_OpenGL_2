@@ -1,5 +1,7 @@
 #pragma once
 
+
+#include <memory>
 #include <glad/glad.h>
 
 #include "VBO.h"
@@ -8,14 +10,19 @@
 class VAO
 {
 private:
-    GLuint _id = 0;
+    GLuint _id;
+    int _vertice_count;
+
+    std::unique_ptr<VBO> _vbo;
+    std::unique_ptr<EBO> _ebo;
 
 public:
-    VAO();
+    VAO(const GLfloat* vertices, const GLuint* indices);
+    VAO(const VAO& vao) = delete;
+    VAO(VAO&& vao) = delete;
     ~VAO();
 
     void link_atribute(
-        VBO &VBO, 
         GLuint layout, 
         GLuint componentNumber, 
         GLenum type, 
@@ -23,11 +30,10 @@ public:
         GLsizei stride, 
         const GLvoid* offset
     );
-    void link_EBO(EBO &EBO);
 
-    void bind();
-    void un_bind();
-    void destroy();
+    void bind() const;
+    void unbind() const;
 
-    GLuint inline get_id() { return _id; }
+    GLuint  inline get_id()    const { return _id;            }
+    int     inline get_count() const { return _vertice_count; }
 };

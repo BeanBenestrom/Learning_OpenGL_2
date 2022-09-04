@@ -1,6 +1,8 @@
 #pragma once
 
+#include <iostream>
 #include <string>
+#include <tuple>
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -10,7 +12,7 @@
 
 namespace utility 
 {
-    int load_text_from_file(std::string &container, const char* path);
+    std::tuple<std::string, bool> load_text_from_file(const std::string& path);
     glm::vec3 rotate_around_x(const glm::vec3& vector, float angle);
     glm::vec3 rotate_around_y(const glm::vec3& vector, float angle);
 }

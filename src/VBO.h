@@ -5,17 +5,18 @@
 class VBO
 {
 private:
-    GLuint _id = 0;
+    GLuint _id;
     GLsizeiptr _size;
 
 public:
     VBO(const GLfloat* vertices, GLsizeiptr size);
+    VBO(const VBO& vbo) = delete;
+    VBO(VBO&& vbo) = delete;
     ~VBO();
 
-    void bind();
-    void un_bind();
-    void destroy();
+    void bind() const;
+    void unbind() const;
 
-    GLsizeiptr inline get_size() { return _size; }
-    GLuint inline get_id() { return _id; }
+    GLsizeiptr inline get_size() const  { return _size; }
+    GLuint     inline get_id()   const  { return _id;   }
 };
