@@ -11,6 +11,7 @@
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
+#include "settings.h"
 #include "shader.h"
 #include "VAO.h"
 #include "VBO.h"
@@ -19,17 +20,6 @@
 #include "camera.h"
 #include "renderer.h"
 // #include "objects/cube.h"
-
-
-#ifdef _DEBUG 
-#define MODE "DEBUG"
-#define LOG(x) std::cout << x << "\n"
-#endif
-
-#ifdef _RELEASE 
-#define MODE "RELEASE"
-#define LOG(x) 
-#endif
 
 
 namespace screenSettings

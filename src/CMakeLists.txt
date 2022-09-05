@@ -1,7 +1,7 @@
 file(GLOB source_files ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 file(GLOB source_object_files ${CMAKE_CURRENT_SOURCE_DIR}/objects/*.cpp)
 
-add_executable(LearnOpenGL ${source_files} ${source_object_files})
+add_executable(LearnOpenGL ${source_files} ${source_object_files} ${CMAKE_CURRENT_SOURCE_DIR}/settings.h)
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
 set_target_properties(LearnOpenGL PROPERTIES DEBUG_POSTFIX "_Debug")
