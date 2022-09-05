@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <unordered_map>
 #include <string>
 #include <memory>
 #include <glad/glad.h>
@@ -12,17 +12,41 @@
 
 namespace storage
 {
-    namespace vertexArrays
+    // namespace vertexArrays
+    // {
+    //     static std::vector<VAO*> _storage;
+
+    //     // Returns the index of the added vertex array
+    //     int add(VAO* vertexArray);
+    //     /* 
+    //     index:
+    //         1 - Cube
+    //     */
+    //     const VAO* get(int index);
+
+
+    //     void destroy();
+    // } 
+
+    namespace shaders
     {
-        static std::vector<VAO*> _storage;
+        static std::unordered_map<std::string, Shader*> _storage;
 
-        void init();
+        // Returns a pointer to the shader
+        // Returns nullptr if load failed
+        Shader* load(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+
         void destroy();
+    } 
 
-        // template<class T>
-        // void add_vertex_array()
-        // {
+    namespace textures
+    {
+        static std::unordered_map<std::string, Texture*> _storage;
 
-        // }
+        // Returns a pointer to the texture
+        // Returns nullptr if load failed
+        Texture* load(const std::string& texturePath);
+
+        void destroy();
     } 
 }

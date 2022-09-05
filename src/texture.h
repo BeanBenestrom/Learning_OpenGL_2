@@ -8,6 +8,7 @@ class Texture
 {
 private:
     bool _status;
+    bool _load_file_status;
     int _width, _height, _channels;
     GLuint _id;
 

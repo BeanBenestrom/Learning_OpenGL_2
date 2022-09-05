@@ -11,6 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "../VAO.h"
 #include "../shader.h"
 #include "../texture.h"
 
@@ -18,19 +19,30 @@
 class Cube 
 {
 private:
+    bool _status;
+
+    float _size;
     glm::vec3 _position;
     glm::vec4 _color;
 
-    std::unique_ptr<Shader> _shader;
-    std::unique_ptr<Texture> _texture;
+    std::unique_ptr<VAO> _vertexArray;
+    Shader* _shader;
+    Texture* _texture; 
 
+    glm::mat4 model;
+    
 public:
-    Cube(const glm::vec3& position, const std::string& texturePath, const std::string& shaderPath);
-    Cube(const glm::vec3& position, const glm::vec4& color, const std::string& shaderPath);
+    Cube(float size, const glm::vec3& position, const std::string& texturePath, const std::string& shaderPath);
+    Cube(float size, const glm::vec3& position, const glm::vec4& color, const std::string& shaderPath);
     ~Cube();
 
     void draw();
 
-    glm::vec3 inline get_position() { return _position; }
-    glm::vec4 inline get_color()    { return _color;    }
+    Shader* get_shader() { return _shader; }
+    Texture* get_texture() { return _texture; } 
+
+    bool      inline get_status()   const { return _status;   }
+    float     inline get_size()     const { return _size;     }
+    glm::vec3 inline get_position() const { return _position; }
+    glm::vec4 inline get_color()    const { return _color;    } 
 };

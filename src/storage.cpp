@@ -1,3 +1,6 @@
+#include <iostream>
+
+#include "settings.h"
 #include "storage.h"
 
 
@@ -6,64 +9,90 @@ namespace storage
 {
     namespace vertexArrays
     {
-        void init()
+        // int add(VAO* vertexArray)
+        // {
+        //     vertexArray->link_atribute(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), 0);
+        //     vertexArray->link_atribute(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GL_FLOAT)));
+        //     _storage.push_back(vertexArray);
+
+        //     return _storage.size() - 1;
+        // }
+
+        // void destroy()
+        // {
+        //     for (VAO* &vertexArray : _storage)
+        //     {
+        //         delete vertexArray;
+        //     }
+        // }
+
+
+        // const VAO* get(int index)
+        // {  
+        //     if (index < 0 || index > _storage.size() - 1) return nullptr;
+        //     else return _storage[index];
+        // }
+    } 
+
+    namespace shaders
+    {
+        Shader* load(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
         {
-            // Cube
-            const GLfloat vertices[] = {
-                -0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-                 0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-                 0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-                -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            if (_storage.find(vertexShaderPath + fragmentShaderPath) != _storage.end())
+            {
+                LOG("Load existing shader");
+                return _storage[vertexShaderPath + fragmentShaderPath];
+            }
+            LOG("Create new shader");
+            Shader* shaderProgram = new Shader(vertexShaderPath, fragmentShaderPath);
 
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-                 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-                -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-
-                -0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-                -0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-
-                0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-                0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-                0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-                 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                -0.5f,  0.5f,  0.5f,  0.0f, 0.0f
-            };
-
-
-            const GLuint indices[] = {
-                0, 1, 2,    2, 3, 0,
-                4, 5, 6,    6, 7, 4,
-                8, 9, 10,   10, 11, 8,
-                12, 13, 14, 14, 15, 12,
-                16, 17, 18, 18, 19, 16,
-                20, 21, 22, 22, 23, 20,
-            };
-
-            VAO* vertexArray = new VAO(vertices, indices);
-            
-            vertexArray->link_atribute(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), 0);
-            vertexArray->link_atribute(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GL_FLOAT)));
-            _storage.push_back(vertexArray);
+            if (!shaderProgram->get_program_status())
+            {
+                delete shaderProgram;
+                return nullptr;
+            }
+            _storage[vertexShaderPath + fragmentShaderPath] = shaderProgram;
+            return shaderProgram;
         }
 
         void destroy()
         {
-            for (VAO* &vertexArray : _storage)
+            for (auto &pair : _storage)
             {
-                delete vertexArray;
+                delete pair.second;
             }
+            _storage.clear();
+        }
+    } 
+
+    namespace textures
+    {
+        Texture* load(const std::string& texturePath)
+        {
+            if (_storage.find(texturePath) != _storage.end())
+            {
+                LOG("Load existing texture");
+                return _storage[texturePath];
+            }
+            LOG("Create new texture");
+            Texture* texture = new Texture(texturePath);
+
+            if (!texture->get_status())
+            {
+                delete texture;
+                return nullptr;
+            }
+            _storage[texturePath] = texture;
+            return texture;
+        }
+
+        void destroy()
+        {
+            for (auto &pair : _storage)
+            {
+                delete pair.second;
+            }
+            _storage.clear();
         }
     } 
 }

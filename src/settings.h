@@ -10,3 +10,5 @@
 #define MODE "RELEASE"
 #define LOG(x) 
 #endif
+
+#define DEFAULT_VERTEX_SHADER "shaders/vertexShader.vs"

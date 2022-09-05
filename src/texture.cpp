@@ -5,7 +5,7 @@
 
 
 Texture::Texture(const std::string& texturePath)
-    : _status{false}, _width{0}, _height{0}, _channels{0}, _id{0}
+    : _status{false}, _load_file_status{false}, _width{0}, _height{0}, _channels{0}, _id{0}
 {
     stbi_set_flip_vertically_on_load(1);
     unsigned char* bytes = stbi_load(texturePath.c_str(), &_width, &_height, &_channels, 4);
@@ -16,6 +16,7 @@ Texture::Texture(const std::string& texturePath)
                   << "    PATH: " << texturePath << "\n";
         return;
     }
+    _load_file_status = true;
 
     glGenTextures(1, &_id);
     glActiveTexture(GL_TEXTURE0);
@@ -30,12 +31,13 @@ Texture::Texture(const std::string& texturePath)
     glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(bytes); 
+    _status = true;
 }
 
 
 Texture::~Texture()
 {
-    glDeleteTextures(1, &_id);
+    if (_load_file_status) glDeleteTextures(1, &_id);
 }
 
 

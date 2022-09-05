@@ -60,35 +60,36 @@ Shader::Shader(const std::string& vertexShaderPath, const std::string& fragmentS
     if (fragmentShader == GL_NONE)  { _fragmentShaderStatus = false; return; }
 
 	// Link shaders
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
+    _id = glCreateProgram();
+    glAttachShader(_id, vertexShader);
+    glAttachShader(_id, fragmentShader);
+    glLinkProgram(_id);
     
+    glDetachShader(_id, vertexShader);
+    glDetachShader(_id, fragmentShader);
 	glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);	
 
     // Check for linking failure
     GLint link_success;
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &link_success);
+    glGetProgramiv(_id, GL_LINK_STATUS, &link_success);
     if (link_success != GL_TRUE)
     {
         GLsizei log_length = 0;
         GLchar message[1024];
-        glGetProgramInfoLog(shaderProgram, 1024, &log_length, message);            
+        glGetProgramInfoLog(_id, 1024, &log_length, message);            
         std::cerr << "[!] OPENGL - Program linking error:\n" << message << std::endl;
 
 		return;
     }
 
 	_programStatus = true;
-	_id = shaderProgram;
 }
 
 
 Shader::~Shader()
 {
-	glDeleteProgram(_id);
+    if (_vertexShaderStatus && _fragmentShaderStatus) glDeleteProgram(_id);
 }
 
 
@@ -169,33 +170,33 @@ ComputeShader::ComputeShader(const std::string& computeShaderPath)
     if (computeShader == GL_NONE) { _computeShaderStatus = false; return; }
 
 	// Link shaders
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, computeShader);
-    glLinkProgram(shaderProgram);
+    _id = glCreateProgram();
+    glAttachShader(_id, computeShader);
+    glLinkProgram(_id);
     
+    glDetachShader(_id, computeShader);
 	glDeleteShader(computeShader);
 
     // Check for linking failure
     GLint link_success;
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &link_success);
+    glGetProgramiv(_id, GL_LINK_STATUS, &link_success);
     if (link_success != GL_TRUE)
     {
         GLsizei log_length = 0;
         GLchar message[1024];
-        glGetProgramInfoLog(shaderProgram, 1024, &log_length, message);            
+        glGetProgramInfoLog(_id, 1024, &log_length, message);            
         std::cerr << "[!] OPENGL - Program linking error:\n" << message << "\n";
 
 		return;
     }
 
 	_programStatus = true;
-	_id = shaderProgram;
 }
 
 
 ComputeShader::~ComputeShader()
 {
-	glDeleteProgram(_id);
+	if (_computeShaderStatus) glDeleteProgram(_id);
 }
 
 
