@@ -23,7 +23,7 @@ private:
 
     float _size;
     glm::vec3 _position;
-    glm::vec4 _color;
+    glm::vec3 _color;
 
     std::unique_ptr<VAO> _vertexArray;
     Shader* _shader;
@@ -33,7 +33,7 @@ private:
     
 public:
     Cube(float size, const glm::vec3& position, const std::string& texturePath, const std::string& shaderPath);
-    Cube(float size, const glm::vec3& position, const glm::vec4& color, const std::string& shaderPath);
+    Cube(float size, const glm::vec3& position, const glm::vec3& color, const std::string& shaderPath);
     ~Cube();
 
     void draw();
@@ -41,8 +41,12 @@ public:
     Shader* get_shader() { return _shader; }
     Texture* get_texture() { return _texture; } 
 
+    void set_size(float size)                    { _size = size;         }
+    void set_position(const glm::vec3& position) { _position = position; }
+    void set_color(const glm::vec3& color)       { _color = color;       }
+
     bool      inline get_status()   const { return _status;   }
     float     inline get_size()     const { return _size;     }
     glm::vec3 inline get_position() const { return _position; }
-    glm::vec4 inline get_color()    const { return _color;    } 
+    glm::vec3 inline get_color()    const { return _color;    } 
 };

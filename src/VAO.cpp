@@ -2,18 +2,13 @@
 
 
 VAO::VAO(
-    const GLfloat* vertices, std::size_t vertice_sizeof, 
-    const GLuint* indices,   std::size_t indices_sizeof
-)   : 
+    const GLfloat* vertices, std::size_t vertice_sizeof)   : 
     _id{0}, 
     _vertice_count{static_cast<GLsizei>(vertice_sizeof / sizeof(GLfloat))}, 
-    _vbo{std::make_unique<VBO>(vertices, vertice_sizeof)}, 
-    _ebo{std::make_unique<EBO>(indices, indices_sizeof)}
+    _vbo{std::make_unique<VBO>(vertices, vertice_sizeof)}
 {
     glGenVertexArrays(1, &_id);
-
     glBindVertexArray(_id);
-    _ebo->bind();
 }
 
 VAO::~VAO()

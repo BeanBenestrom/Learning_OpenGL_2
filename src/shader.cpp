@@ -4,6 +4,7 @@
 
 #include "utility.h"
 #include "shader.h"
+#include "settings.h"
 
 
 GLuint compile_shader(const std::string& shaderSource, GLenum shaderType)
@@ -95,7 +96,10 @@ Shader::~Shader()
 
 void Shader::activate() const
 {
+    if (_id == current_bound_shader) { return; }
+
     glUseProgram(_id);
+    current_bound_shader = _id;
 }
 
 
@@ -125,30 +129,35 @@ GLint Shader::get_uniform_location(const std::string& name)
 
 void Shader::set_uniform(const std::string& name, GLint value)
 {
+    activate();
     glUniform1i(get_uniform_location(name), value);
 }
 
 
 void Shader::set_uniform(const std::string& name, GLfloat data)
 {
+    activate();
     glUniform1f(get_uniform_location(name), data);
 }
 
 
 void Shader::set_uniform(const std::string& name, const glm::vec3& vector)
 {
+    activate();
     glUniform3fv(get_uniform_location(name), 1, glm::value_ptr(vector));
 }
 
 
 void Shader::set_uniform(const std::string& name, const glm::vec4& vector)
 {
+    activate();
     glUniform4fv(get_uniform_location(name), 1, glm::value_ptr(vector));
 }
 
 
 void Shader::set_uniform(const std::string& name, const glm::mat4& matrix)
 {
+    activate();
     glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
@@ -202,7 +211,10 @@ ComputeShader::~ComputeShader()
 
 void ComputeShader::activate() const
 {
+    if (_id == current_bound_shader) { return; }
+
     glUseProgram(_id);
+    current_bound_shader = _id;
 }
 
 void ComputeShader::deactivate() const
@@ -231,29 +243,34 @@ GLint ComputeShader::get_uniform_location(const std::string& name)
 
 void ComputeShader::set_uniform(const std::string& name, GLint value)
 {
+    activate();
     glUniform1i(get_uniform_location(name), value);
 }
 
 
 void ComputeShader::set_uniform(const std::string& name, GLfloat data)
 {
+    activate();
     glUniform1f(get_uniform_location(name), data);
 }
 
 
 void ComputeShader::set_uniform(const std::string& name, const glm::vec3& vector)
 {
+    activate();
     glUniform3fv(get_uniform_location(name), 1, glm::value_ptr(vector));
 }
 
 
 void ComputeShader::set_uniform(const std::string& name, const glm::vec4& vector)
 {
+    activate();
     glUniform4fv(get_uniform_location(name), 1, glm::value_ptr(vector));
 }
 
 
 void ComputeShader::set_uniform(const std::string& name, const glm::mat4& matrix)
 {
+    activate();
     glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, glm::value_ptr(matrix));
 }

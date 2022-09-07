@@ -12,6 +12,9 @@
 GLuint compile_shader(const GLchar* shaderSource, GLenum shaderType);
 
 
+static GLuint current_bound_shader;
+
+
 class Shader
 {
 private:  

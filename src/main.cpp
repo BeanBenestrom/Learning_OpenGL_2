@@ -28,8 +28,8 @@
 
 namespace screenSettings
 {
-    const int width = 1000;
-    const int height = 800;
+    int width = 1000;
+    int height = 800;
 }
 
 namespace cameraSettings
@@ -54,6 +54,9 @@ Camera camera(
 //Mouse
 float prev_mouse_x = screenSettings::width / 2;
 float prev_mouse_y = screenSettings::height / 2;
+bool mouse_Hold = false;
+glm::mat4 projection; 
+glm::mat4 ortho;
 
 // Delta time
 float previous_time = 0.0f;
@@ -126,18 +129,75 @@ void processInput(GLFWwindow *window, Camera &camera, float deltaTime)
 }
 
 
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if (button == GLFW_MOUSE_BUTTON_RIGHT)
+    {
+        if (action == GLFW_PRESS) 
+        {      
+            mouse_Hold = true;
+        }
+        else if (action == GLFW_RELEASE)
+        {
+            mouse_Hold = false;
+        } 
+    }
+}
+
+
 void mouse_movement(GLFWwindow* window, double xPos, double yPos)
 {
-    float x_pos = static_cast<float>(xPos);
-    float y_pos = static_cast<float>(yPos);
+    static bool first_held = true;
 
-    float xoffset = x_pos - prev_mouse_x;
-    float yoffset = y_pos - prev_mouse_y;
+    if (mouse_Hold)
+    {
+        float x_pos = static_cast<float>(xPos);
+        float y_pos = static_cast<float>(yPos);
 
-    prev_mouse_x = x_pos;
-    prev_mouse_y = y_pos;
+        if (first_held)
+        {
+            prev_mouse_x = x_pos;
+            prev_mouse_y = y_pos;
+            first_held = false;
+        }
 
-    camera.rotate(xoffset, yoffset);
+        float xoffset = x_pos - prev_mouse_x;
+        float yoffset = y_pos - prev_mouse_y;
+
+        prev_mouse_x = x_pos;
+        prev_mouse_y = y_pos;
+
+        camera.rotate(xoffset, yoffset);
+    }
+    else
+    {
+        first_held = true;
+    }
+}
+
+
+void update_ortho()
+{
+    float f_width = (float)screenSettings::width;
+    float f_height = (float)screenSettings::height;
+    float larger_side = std::max(f_width, f_height);
+
+    ortho = glm::ortho(
+        -f_width / larger_side, f_width / larger_side, 
+        -f_height / larger_side, f_height / larger_side
+    );
+}
+
+
+void window_size_callback(GLFWwindow* window, int width, int height)
+{
+    screenSettings::width = width;
+    screenSettings::height = height;
+
+    glViewport(0, 0, width, height);
+
+    projection = glm::perspective(cameraSettings::fov, (float)screenSettings::width/(float)screenSettings::height, 0.1f, 100.0f);
+    // update_ortho();
 }
 
 
@@ -171,8 +231,10 @@ int main()
     }
     glfwMakeContextCurrent(window);
     glfwSetWindowPos(window, 800, 100);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(window, mouse_movement);
+    glfwSetWindowSizeCallback(window, window_size_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
     glfwSwapInterval(0);
 
     // Setup Glad
@@ -189,17 +251,29 @@ int main()
 #endif
 
     {
-        Cube cube1(2.0f, glm::vec3{0.0f, 0.0f, 0.0f}, glm::vec4{1.0f, 1.0f, 1.0f, 1.0f}, "shaders/fragmentShader.fs");
-        Cube cube2(2.0f, glm::vec3{5.0f, 0.0f, 0.0f}, "textures/Mr Bean God form 2.png", "shaders/fragmentShaderTex.fs");
+        // update_ortho();
+        glm::vec3 temp_objectColor(1.0f);
+        glm::vec3 temp_lightColor(1.0f);
+        glm::vec3 temp_lightPosition(5.0f, 0.0f, 0.0f);
+        float ambientScalar = 0.1f;
+        float secularScalar = 0.5f;
+        float shine = 32.0f;
+        float object_size = 2.0f;
+
+        Cube cube1(object_size, glm::vec3{0.0f, 0.0f, 0.0f}, temp_objectColor, "shaders/fragmentShader.fs");
+        Cube cube2(0.5f, glm::vec3{5.0f, 0.0f, 0.0f}, temp_lightColor, "shaders/lightFragmentShader.fs");
+
+        Shader* cube1_shader = cube1.get_shader();
+        Shader* cube2_shader = cube2.get_shader();
+
+        cube1_shader->set_uniform("lightColor", cube2.get_color());
+        cube1_shader->set_uniform("ambientScalar", ambientScalar);
 
         // Camera space --> Screen space
-        glm::mat4 projection; 
         glm::mat4 view;
         projection = glm::perspective(cameraSettings::fov, (float)screenSettings::width/(float)screenSettings::height, 0.1f, 100.0f);
-        cube1.get_shader()->activate();
-        cube1.get_shader()->set_uniform("projection", projection);
-        cube2.get_shader()->activate();
-        cube2.get_shader()->set_uniform("projection", projection);
+        cube1_shader->set_uniform("projection", projection);
+        cube2_shader->set_uniform("projection", projection);
 
         // ImGui
         ImGui::CreateContext();
@@ -230,9 +304,32 @@ int main()
                 ImGui::Text("Delta time %.1f FPS", 1.0f / delta_time);
             }
             ImGui::Text("Last lag %.1f FPS", 1.0f / temp_deltaTime);
+            
+            
+            ImGui::SliderFloat("Ambience", &ambientScalar, 0, 1);
+            cube1_shader->set_uniform("ambientScalar", ambientScalar);
+            ImGui::SliderFloat("Secular", &secularScalar, 0, 1);
+            cube1_shader->set_uniform("secularScalar", secularScalar);
+            ImGui::SliderFloat("Shine", &shine, 1, 100);
+            cube1_shader->set_uniform("shine", shine);
+
+            ImGui::ColorEdit3("Object color", &temp_objectColor.x);
+            cube1.set_color(temp_objectColor);
+            
+            ImGui::ColorEdit3("Light color", &temp_lightColor.x);
+            cube1_shader->set_uniform("lightColor", temp_lightColor);
+            cube2.set_color(temp_lightColor);
+
+            ImGui::SliderFloat("Object size", &object_size, 0, 5);
+            cube1.set_size(object_size);
+
+            
+            ImGui::DragFloat3("Light position", &temp_lightPosition.x, 0.1, -10, 10);
+            cube2.set_position(temp_lightPosition);
+
+            cube1_shader->set_uniform("lightPosition", cube2.get_position());
 
             // Draw objects
-
             cube1.draw();
             cube2.draw();
 
@@ -240,10 +337,13 @@ int main()
             view = glm::rotate(glm::mat4(1.0f), -glm::radians(camera.get_rotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
             view = glm::rotate(view, -glm::radians(camera.get_rotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
             view = glm::translate(view, camera.get_position());
-            cube1.get_shader()->activate();
-            cube1.get_shader()->set_uniform("view", view);
-            cube2.get_shader()->activate();
-            cube2.get_shader()->set_uniform("view", view);
+            cube1_shader->set_uniform("view", view);
+            cube2_shader->set_uniform("view", view);
+
+            cube1_shader->set_uniform("projection", projection);
+            cube2_shader->set_uniform("projection", projection);
+
+            cube1_shader->set_uniform("camPosition", camera.get_position());
 
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

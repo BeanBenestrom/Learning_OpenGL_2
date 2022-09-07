@@ -14,13 +14,9 @@ private:
     GLsizei _vertice_count;
 
     std::unique_ptr<VBO> _vbo;
-    std::unique_ptr<EBO> _ebo;
 
 public:
-    VAO(
-        const GLfloat* vertices, std::size_t vertice_sizeof, 
-        const GLuint* indices,   std::size_t indices_sizeof
-    );
+    VAO(const GLfloat* vertices, std::size_t vertice_sizeof);
     VAO(const VAO& vao) = delete;
     VAO(VAO&& vao) = delete;
     ~VAO();
